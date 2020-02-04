@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         CSVFile csvFile = new CSVFile(inputStream);
         List<String[]> scoreList = csvFile.read();
 
+
         for(String[] scoreData:scoreList ) {
             itemArrayAdapter.add(scoreData);
         }
