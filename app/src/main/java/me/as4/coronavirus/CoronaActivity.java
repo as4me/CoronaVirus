@@ -27,6 +27,7 @@ public class CoronaActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private Button buttontest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +64,11 @@ public class CoronaActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Action bar menu
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
