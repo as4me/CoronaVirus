@@ -2,6 +2,7 @@ package me.as4.coronavirus;
 
 import android.os.Bundle;
 
+import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -26,7 +27,9 @@ import android.widget.Toast;
 public class CoronaActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private Button buttontest;
+    private Button buttondashboard;
+    private Button buttonabout;
+    private Button buttonfdes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,14 +37,6 @@ public class CoronaActivity extends AppCompatActivity {
         setContentView(R.layout.activity_corona);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -55,13 +50,32 @@ public class CoronaActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         View headerLayout = navigationView.getHeaderView(0);
-        buttontest = headerLayout.findViewById(R.id.dashboard);
-        buttontest.setOnClickListener(new View.OnClickListener() {
+        buttondashboard = headerLayout.findViewById(R.id.dashboard);
+        buttondashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplicationContext(),"TEST",Toast.LENGTH_LONG).show();
             }
         });
+
+        buttonabout = headerLayout.findViewById(R.id.about);
+        buttonfdes = headerLayout.findViewById(R.id.about);
+
+        buttonabout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        buttonfdes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+
     }
 
     /**
