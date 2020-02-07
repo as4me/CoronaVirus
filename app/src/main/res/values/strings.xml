@@ -16,4 +16,14 @@
     <string name="menu_send">Send</string>
     <string name="menu_insta">Instagram</string>
     <string name="menu_twit">Twitter</string>
+
+    <string name="what_is_coronavirus">Coronaviruses are a group of viruses that cause diseases in mammals and birds. In humans, the viruses cause respiratory infections – including the common cold – which are typically mild. Rarer forms such as SARS, MERS and the novel coronavirus causing the 2019–20 Wuhan coronavirus outbreak can be lethal.There are no vaccines or antiviral drugs that are approved for prevention or treatment.</string>
+    <string name="what_is_in_china">2019 Novel Coronavirus (2019-nCoV) is a virus identified as the cause of an outbreak of respiratory illness first detected in Wuhan, China. Early on, many of the patients in the outbreak in Wuhan, China reportedly had some link to a large seafood and animal market, suggesting animal-to-person spread. However, a growing number of patients reportedly have not had exposure to animal markets, indicating person-to-person spread is occurring. At this time, it’s unclear how easily or sustainably this virus is spreading between people.</string>
+    <string name="how_to_prevent">- Wash your hands often with soap and water for at least 20 seconds, especially after going to the bathroom; before eating; and after blowing your nose, coughing, or sneezing.
+- If soap and water are not readily available, use an alcohol-based hand sanitizer with at least 60% alcohol. Always wash hands with soap and water if hands are visibly dirty.
+- Avoid touching your eyes, nose, and mouth with unwashed hands.
+- Avoid close contact with people who are sick.
+- Stay home when you are sick.
+- Cover your cough or sneeze with a tissue, then throw the tissue in the trash.
+- Clean and disinfect frequently touched objects and surfaces using a regular household cleaning spray or wipe.</string>
 </resources>
