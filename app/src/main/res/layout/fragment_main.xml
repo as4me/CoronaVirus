@@ -89,7 +89,10 @@
                 app:srcCompat="@drawable/map" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-
+        <com.jjoe64.graphview.GraphView
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:id="@+id/graph" />
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>

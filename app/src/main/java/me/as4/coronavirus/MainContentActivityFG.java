@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
+import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 // Defines the xml file for the fragment
 
 public class MainContentActivityFG extends Fragment {
@@ -33,6 +37,16 @@ public class MainContentActivityFG extends Fragment {
                 startActivity(intent);
             }
         });
+        GraphView graph = view.findViewById(R.id.graph);
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
+                new DataPoint(0, 1),
+                new DataPoint(1, 2),
+                new DataPoint(2, 4),
+                new DataPoint(3, 6),
+                new DataPoint(4, 8)
+        });
+        graph.addSeries(series);
+
         return view;
     }
 }
