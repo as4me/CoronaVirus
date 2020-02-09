@@ -5,16 +5,77 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity">
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/mainfragment"
+            android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_top"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorAccent"
+            android:minHeight="?attr/actionBarSize"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
 
-        <ListView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/listView"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            tools:ignore="MissingConstraints" />
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/gothamproblack"
+                    android:text="CoronaVirus"
+                    android:textColor="#FFF"
+                    android:textSize="24sp"
+                    tools:layout_editor_absoluteX="166dp"
+                    tools:layout_editor_absoluteY="18dp" />
+
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <com.gigamole.navigationtabstrip.NavigationTabStrip
+            android:id="@+id/nts"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/colorAccent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_top"
+            app:nts_active_color="#FFFFFF"
+            app:nts_animation_duration="300"
+            app:nts_color="#FFFFFF"
+            app:nts_corners_radius="1.5dp"
+            app:nts_factor="2.5"
+            app:nts_gravity="top"
+            app:nts_inactive_color="#FDFDFD"
+            app:nts_size="16sp"
+            app:nts_titles="@array/titles"
+            app:nts_type="line"
+            app:nts_typeface="fonts/gothamproblack.ttf"
+            app:nts_weight="3dp" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+                <FrameLayout
+                    android:id="@+id/fooFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </FrameLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
