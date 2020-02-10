@@ -1,4 +1,4 @@
-package me.as4.coronavirus;
+package me.as4.coronavirus.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,6 +25,8 @@ import com.mapbox.mapboxsdk.style.layers.Layer;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.as4.coronavirus.R;
 
 public class MapsActivity extends AppCompatActivity {
 
