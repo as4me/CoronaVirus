@@ -18,13 +18,25 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.LegendRenderer;
 import com.jjoe64.graphview.helper.StaticLabelsFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 import me.as4.coronavirus.activities.MapsActivity;
 import me.as4.coronavirus.R;
+import me.as4.coronavirus.models.RealTimeDatabase;
+
+import static android.content.ContentValues.TAG;
 // Defines the xml file for the fragment
 
 public class MainContentActivityFG extends Fragment {
@@ -38,12 +50,20 @@ public class MainContentActivityFG extends Fragment {
     private TextView total_recovered;
     private TextView total_confirmed;
     private int a,b,c;
-
+    private DatabaseReference mDatabase;
+    private ArrayList<RealTimeDatabase> realTimeDatabases;
+    private ArrayList<Integer> dataGraph;
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        final View view = inflater.inflate(R.layout.fragment_main, container, false);
         thiscontext = getContext();
+
+        realTimeDatabases = new ArrayList<>();
+        dataGraph = new ArrayList<>();
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         mSettings = thiscontext.getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
         total_deaths = view.findViewById(R.id.total_deaths);
@@ -71,9 +91,64 @@ public class MainContentActivityFG extends Fragment {
             }
         });
 
+        ValueEventListener postListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    RealTimeDatabase post = postSnapshot.getValue(RealTimeDatabase.class);
+                    realTimeDatabases.add(post);
+                    Log.d( "DATA",   String.valueOf(postSnapshot.getKey())  + ": "+ String.valueOf(post.confirmed));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.child("data/date/2020-03-06/country").addValueEventListener(postListener);
+
+        ValueEventListener postListenerGraph = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // Get Post object and use the values to update the UI
+                for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
+                    RealTimeDatabase post = postSnapshot.getValue(RealTimeDatabase.class);
+
+                    Log.d( "DATAGRAPH",   String.valueOf(postSnapshot.getKey())  + ": "+ String.valueOf(post.confirmed));
+                    dataGraph.add(post.confirmed);
+
+                }
+
+                init(view);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting Post failed, log a message
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+                // ...
+            }
+        };
+        mDatabase.child("data/date").addValueEventListener(postListenerGraph);
+
+        return view;
+    }
+
+    private void init(View view) {
+        Log.d("DATAGRAPH", String.valueOf(dataGraph.size()));
+
+
+
+
         GraphView graph = view.findViewById(R.id.graph);
         graph.setTitle("Dashbord graph");
-        graph.getViewport().setScrollable(true);
+        graph.getViewport().setScrollable(false);
+      /*
+
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
                 new DataPoint(0, 0),
                 new DataPoint(1, 25),
@@ -97,43 +172,28 @@ public class MainContentActivityFG extends Fragment {
                 new DataPoint(19, 2600),
                 new DataPoint(20, 3200),
                 new DataPoint(21, 3400),
-
-
-
         });
         graph.addSeries(series);
         series.setColor(Color.GREEN);
 
-
-        LineGraphSeries<DataPoint> series1 = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(0, 0),
-                new DataPoint(1, 278),
-                new DataPoint(2, 547),
-                new DataPoint(3, 639),
-                new DataPoint(4, 916),
-                new DataPoint(5, 2000),
-                new DataPoint(6, 2700),
-                new DataPoint(7, 4400),
-                new DataPoint(8, 6000),
-                new DataPoint(9, 7700),
-                new DataPoint(10, 9700),
-                new DataPoint(11, 11200),
-                new DataPoint(12, 14300),
-                new DataPoint(13, 17200),
-                new DataPoint(14, 19700),
-                new DataPoint(15, 23700),
-                new DataPoint(16, 27400),
-                new DataPoint(17, 34100),
-                new DataPoint(18, 36800),
-                new DataPoint(19, 39800),
-                new DataPoint(20, 40200),
-                new DataPoint(21, 40200),
-
-
-
-        });
+*/
+        LineGraphSeries<DataPoint> series1 = new LineGraphSeries<DataPoint>(generateData());
         graph.addSeries(series1);
+
         series1.setColor(Color.RED);
-        return view;
+        graph.getViewport().setMaxX(dataGraph.size()+1);
+        graph.getGridLabelRenderer().setHorizontalAxisTitle("Days");
+    }
+
+    private DataPoint[] generateData() {
+        DataPoint[] values = new DataPoint[dataGraph.size()];
+        for (int i=0; i<dataGraph.size(); i++) {
+            int x = i;
+            Log.d("DATAGRAPH", String.valueOf(x) + " : " + dataGraph.get(i));
+
+            DataPoint v = new DataPoint(x, dataGraph.get(i));
+            values[i] = v;
+        }
+        return values;
     }
 }

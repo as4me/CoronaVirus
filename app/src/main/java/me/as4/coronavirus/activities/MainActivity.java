@@ -24,24 +24,15 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.gigamole.navigationtabstrip.NavigationTabStrip;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,6 +45,7 @@ import me.as4.coronavirus.fragments.AboutContentActivityFG;
 import me.as4.coronavirus.fragments.MainContentActivityFG;
 import me.as4.coronavirus.models.APIModel;
 import me.as4.coronavirus.models.Feature;
+import me.as4.coronavirus.models.RealTimeDatabase;
 import me.as4.coronavirus.service.AppCoronaService;
 import me.as4.coronavirus.service.TinyDB;
 import retrofit2.Call;
@@ -69,13 +61,15 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mSettings;
     public static final String APP_PREFERENCES = "mysettings";
     private List<Feature > listmode;
-
+    private DatabaseReference mDatabase;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // Access a Cloud Firestore instance from your Activity
-        final FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        // Write a message to the database
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+
         appCoronaService = AppCoronaService.retrofit.create(AppCoronaService.class);
         final Call<APIModel> call = appCoronaService.getData();
         listmode = new ArrayList<>();
@@ -88,14 +82,29 @@ public class MainActivity extends AppCompatActivity {
                     int death = 0;
                     int recover = 0;
                     int confirmed = 0;
+                    final ArrayList<String> region = new ArrayList();
+                    final ArrayList<String> region_death = new ArrayList();
+                    final ArrayList<String> region_recover = new ArrayList();
+                    final ArrayList<String> region_confirmed = new ArrayList();
+                    final ArrayList<String> region_lat = new ArrayList();
+                    final ArrayList<String> region_lon = new ArrayList();
+
                     for (int i = 0; i < response.body().getFeatures().size(); i++) {
-                        Log.d("DATA", "Сountry " + response.body().getFeatures().get(i).getAttributes().getCountryRegion() + ": " + response.body().getFeatures().get(i).getAttributes().getDeaths() );
+                    //    Log.d("DATA", "Сountry " + response.body().getFeatures().get(i).getAttributes().getCountryRegion() + ": " + response.body().getFeatures().get(i).getAttributes().getDeaths() );
                         death += response.body().getFeatures().get(i).getAttributes().getDeaths();
                         recover += response.body().getFeatures().get(i).getAttributes().getRecovered();
                         confirmed += response.body().getFeatures().get(i).getAttributes().getConfirmed();
+                        region.add(response.body().getFeatures().get(i).getAttributes().getCountryRegion());
+                        region_death.add(String.valueOf(response.body().getFeatures().get(i).getAttributes().getDeaths()));
+                        region_recover.add(String.valueOf(response.body().getFeatures().get(i).getAttributes().getRecovered()));
+                        region_confirmed.add(String.valueOf(response.body().getFeatures().get(i).getAttributes().getConfirmed()));
+                        region_lat.add(String.valueOf(response.body().getFeatures().get(i).getAttributes().getLat()));
+                        region_lon.add(String.valueOf(response.body().getFeatures().get(i).getAttributes().getLong()));
                     }
                     mSettings = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = mSettings.edit();
+
+
 
 
                     editor.putInt("deaths", death);
@@ -106,58 +115,35 @@ public class MainActivity extends AppCompatActivity {
                     editor.apply();
 
                     initF();
-                    final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd");
-                    LocalDate localDate = LocalDate.now();
+                    // create a clock
+                    ZoneId zid = ZoneId.of("Europe/Paris");
 
+                    final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+                    final LocalDate localDate = LocalDate.now(zid);
 
-                    DocumentReference docRef = db.collection("data").document("stat");
-                    docRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    final int finalConfirmed = confirmed;
+                    final int finalDeath = death;
+                    final int finalRecover = recover;
+                    mDatabase.child("data").child("verif").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                DocumentSnapshot document = task.getResult();
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                if (document.exists()) {
-                                    Log.d("DATAT", "DocumentSnapshot data: " + document.getData().get("deaths"));
+                                Log.d("DATA", String.valueOf(dataSnapshot.getValue()));
 
-
-                                } else {
-                                    Log.d("DATA", "No such document");
+                                if (!String.valueOf(dataSnapshot.getValue()).equals(localDate.toString())){
+                                    initW(localDate, finalConfirmed, finalDeath, finalRecover,region,region_death,region_lat,region_lon,region_confirmed,region_recover);
                                 }
-                            } else {
-                                Log.d("DATA", "get failed with ", task.getException());
-                            }
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
                         }
                     });
 
 
-                    Map<String, Object> docData = new HashMap<>();
-                    Map<String, Object> nestedData = new HashMap<>();
-                    Map<String, Object> nestedData1 = new HashMap<>();
-                    Map<String, Object> nestedData2 = new HashMap<>();
-
-                    nestedData.put(String.valueOf(localDate), confirmed);
-                    nestedData1.put(String.valueOf(localDate), death);
-                    nestedData2.put(String.valueOf(localDate), recover);
-
-                    docData.put("total", nestedData);
-                    docData.put("deaths", nestedData1);
-                    docData.put("recover", nestedData2);
-
-                    db.collection("data").document("stat")
-                            .set(docData)
-                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Log.d("data", "DocumentSnapshot successfully written!");
-                                }
-                            })
-                            .addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Log.w("DATA", "Error writing document", e);
-                                }
-                            });
 
                 } else {
                     Log.d("DATA", "ERROR");
@@ -169,6 +155,30 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("DATA", "ERROR" + t.getMessage());
             }
         });
+
+
+
+    }
+
+    private void initW(LocalDate localDate, int Confirmed, int Death, int Recover,  ArrayList region, ArrayList<String> region_deaths,ArrayList<String> region_lat,ArrayList<String> region_lon,ArrayList<String> region_confirmed,ArrayList<String> region_recovered) {
+        RealTimeDatabase data = new RealTimeDatabase(Confirmed, Death,Recover,null,null,null);
+        mDatabase.child("data").child("date").child(localDate.toString()).setValue(data);
+        mDatabase.child("data").child("verif").setValue(localDate.toString());
+
+        for (int i = 0; i < region.size(); i++) {
+            RealTimeDatabase data1 = new RealTimeDatabase(Integer.parseInt(region_confirmed.get(i)), Integer.parseInt(region_deaths.get(i)),Integer.parseInt(region_recovered.get(i)),null, Double.parseDouble(region_lat.get(i)),Double.parseDouble(region_lon.get(i)));
+            Map<String, Object> postValues = data1.toMap();
+            Map<String, Object> childUpdates = new HashMap<>();
+            childUpdates.put("/data/date/" + localDate.toString() +"/country/"+region.get(i).toString(), postValues);
+            mDatabase.updateChildren(childUpdates);
+        }
+
+
+
+
+
+
+
 
 
 
@@ -201,9 +211,6 @@ public class MainActivity extends AppCompatActivity {
                         fragmentClass = MainContentActivityFG.class;
                         break;
                     case 1:
-                        fragmentClass = MainContentActivityFG.class;
-                        break;
-                    case 2:
                         fragmentClass = AboutContentActivityFG.class;
                         break;
 
