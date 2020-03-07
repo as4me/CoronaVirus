@@ -62,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
     public static final String APP_PREFERENCES = "mysettings";
     private List<Feature > listmode;
     private DatabaseReference mDatabase;
+    public  LocalDate localDate;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,7 +122,10 @@ public class MainActivity extends AppCompatActivity {
                     ZoneId zid = ZoneId.of("Europe/Paris");
 
                     final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
-                    final LocalDate localDate = LocalDate.now(zid);
+                    localDate = LocalDate.now(zid);
+
+                    editor.putString("date", localDate.toString());
+                    editor.apply();
 
                     final int finalConfirmed = confirmed;
                     final int finalDeath = death;
@@ -172,15 +178,6 @@ public class MainActivity extends AppCompatActivity {
             childUpdates.put("/data/date/" + localDate.toString() +"/country/"+region.get(i).toString(), postValues);
             mDatabase.updateChildren(childUpdates);
         }
-
-
-
-
-
-
-
-
-
 
     }
 
