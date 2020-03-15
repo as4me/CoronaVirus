@@ -13,3 +13,5 @@ For more details see [COVID-19 CORONAVIRUS OUTBREAK](https://www.worldometers.in
 ### Support or Contact
 
 If you wanna contact just send me an email wantedmins@gmail.com
+
+<img src="https://i.imgur.com/z699Cym.jpg">
