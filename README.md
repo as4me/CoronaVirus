@@ -19,3 +19,8 @@ If you wanna contact just send me an email wantedmins@gmail.com
 <img src="https://i.imgur.com/HU6MhcV.jpg" width="200">
 
 
+<p float="left">
+  <img src="https://i.imgur.com/z699Cym.jpg" width="100" />
+  <img src="https://i.imgur.com/pUyNVLx.jpg" width="100" /> 
+  <img src="/img3.png" width="100" />
+</p>
