@@ -2,8 +2,6 @@
 
 This application has been developed in personal interests for self-information.
 
-This is an open-source project. Everyone can download and install it.
-
 ### Description
 
 Track the spread of the Wuhan Coronavirus Covid-19 outbreak, use an interactive map, view stats , check affected regions in real-time and more.
