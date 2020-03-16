@@ -17,3 +17,6 @@ If you wanna contact just send me an email wantedmins@gmail.com
   <img src="https://i.imgur.com/pUyNVLx.jpg" width="150" /> 
   <img src="https://i.imgur.com/HU6MhcV.jpg" width="150" />
 </p>
+
+### DOWNLOAD
+[LINK](https://github.com/as4me/CoronaVirus/blob/master/coronavirusinfo.apk)
